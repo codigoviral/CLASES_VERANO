@@ -167,3 +167,7 @@ servicio = ServicioCliente("localhost", "root", "", "BDCLIENTE")
 servicio.agregarCliente(cliente)
 servicio.cerrarConexion()
 
+create database  bdteste
+create table bd
+
+
