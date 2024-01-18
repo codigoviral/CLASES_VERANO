@@ -1,0 +1,175 @@
+
+
+
+El comienzo*
+
+CREATE DATABASE BDTEST1;
+CREATE TABLE SEGMENTO
+(
+	ID INT NOT NULL,
+	NOMBRE VARCHAR(50),
+	CONSTRAINT SEGMENTO_PK PRIMARY KEY (ID)
+);
+CREATE TABLE CLIENTE
+(
+	RUT INT,
+	DV VARCHAR(1),
+	NOMBRE VARCHAR(50),
+	APELLIDO_PAT VARCHAR(50),
+	APELLIDO_MAT VARCHAR(50),
+	SEGMENTO_ID INT,
+	CONSTRAINT CLIENTE_PK PRIMARY KEY (RUT),
+	CONSTRAINT CLIENTE_SEGMENTO_FK FOREIGN KEY (SEGMENTO_ID)
+	REFERENCES SEGMENTO(ID)
+);
+
+
+
+create table segmento
+(
+	id int not null,
+	nombre varchar(50),
+	constraint segmento_pk primary key (id)
+);
+
+
+create table cliente
+(
+	rut int,
+	dv varchar(1),
+	nombre varchar (50),
+	apellido_pat varchar (50),
+	apellido_mat varchar (50),
+	segmento_id int,
+	constraint cliente_pk primary key (rut),
+	constraint cliente_segmento_fk foreign key (segmento_id)
+	references segmento(id)
+);
+
+insert into segmento (id, nombre) values (1, 'top');
+insert into segmento (id, nombre) values (2, 'medium');
+delete from segmento where id=2;
+describe cliente
+insert into cliente(rut, dv, nombre, apellido_pat, apellido_mat, segmento_id) values (1, '9', 'test', 'test pat', 'test mat', 1);
+insert into cliente(rut, dv, nombre, apellido_pat, apellido_mat, segmento_id) values (2, '7', 'test 2', 'test pat 2','test mat 2', 2);
+
+select segmento.nombre, cliente.nombre, cliente.apellido_pat, cliente.apellido_mat from segmento inner join cliente on segmento.id = cliente.segmento_id where segmento.id =1;
+
+
+
+
+
+
+
+merzi@DESKTOP-6MUA6EK c:\xampp
+# mysql -u root -p
+Enter password:
+Welcome to the MariaDB monitor.  Commands end with ; or \g.
+Your MariaDB connection id is 15
+Server version: 10.4.32-MariaDB mariadb.org binary distribution
+
+Copyright (c) 2000, 2018, Oracle, MariaDB Corporation Ab and others.
+
+Type 'help;' or '\h' for help. Type '\c' to clear the current input statement.
+
+MariaDB [(none)]> USE BDTEST1
+Database changed
+MariaDB [BDTEST1]> select * from segmento;
++----+--------+
+| ID | NOMBRE |
++----+--------+
+|  1 | TOP 1  |
+|  2 | TOP 2  |
+|  3 | TOP 3  |
++----+--------+
+3 rows in set (0.000 sec)
+
+MariaDB [BDTEST1]>
+
+
+
+
+PARA VISUAL ESTUDIO:
+
+
+
+
+import mysql.connector
+mydb = mysql.connector.connect(
+    host="localhost",
+    user="root",
+    password="",
+    database="bdtest1"
+)
+mycursor = mydb.cursor()
+sql = "SELECT SEGMENTO.NOMBRE, CLIENTE.NOMBRE FROM SEGMENTO INNER JOIN CLIENTE ON SEGMENTO.ID = CLIENTE.SEGMENTO_ID WHERE ID=%s"
+val = [1]
+mycursor.execute(sql,val)
+for fila in mycursor:
+    for campo in fila:
+        print(campo)
+mycursor.close()
+mydb.close()
+
+
+3ERA
+
+
+import mysql.connector
+mydb = mysql.connector.connect(
+    host="localhost",
+    user="root",
+    password="",
+    database="bdtest1"
+)
+mycursor = mydb.cursor()
+sql = "INSERT INTO SEGMENTO (ID, NOMBRE) VALUES (%s, %s)"
+val = (3, 'TOP 3')
+mycursor.execute(sql, val)
+mydb.commit()
+mycursor.close()
+mydb.close()
+
+
+
+
+import mysql.connector
+
+class Cliente:
+    def _init_(self, rut, nombre):
+        self.rut = rut
+        self.nombre = nombre
+    def getRut(self):
+        return self.rut
+    def setRut(self, rut):
+        self.rut = rut
+    def getNombre(self):
+        return self.nombre
+    def setNombre(self, nombre):
+        self.nombre = nombre
+
+class ServicioCliente:
+    def _init_(self, host, usuario, password, baseDatos):
+        self.conexion = mysql.connector.connect(
+            host = host,
+            user = usuario,
+            password = password,
+            database = baseDatos
+        )
+        self.cursor = self.conexion.cursor()
+
+    def agregarCliente(self, cliente):
+        sql = "INSERT INTO CLIENTE(RUT, NOMBRE) VALUES (%s, %s)"
+        val = (cliente.getRut(), cliente.getNombre())
+        self.cursor.execute(sql, val)
+        self.conexion.commit()
+    
+    def cerrarConexion(self):
+        self.cursor.close()
+        self.conexion.close()
+
+cliente = Cliente(1, "a")
+servicio = ServicioCliente("localhost", "root", "", "BDCLIENTE")
+servicio.agregarCliente(cliente)
+servicio.cerrarConexion()
+
