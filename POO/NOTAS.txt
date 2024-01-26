@@ -169,5 +169,3 @@ servicio.cerrarConexion()
 
 create database  bdteste
 create table bd
-
-
